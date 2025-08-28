@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import './App.css';
 import DataEntryForm from './components/DataEntryForm';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
+import GamificationDashboard from './components/GamificationDashboard';
+import DataManager from './components/DataManager';
 import { useMetrics } from './hooks/useMetrics';
 import { useEntries } from './hooks/useEntries';
+import { calculateGamificationStats } from './utils/gamification';
+
+type ViewType = 'entry' | 'analytics' | 'gamification' | 'data';
 
 function App() {
   const { metrics, loading: metricsLoading } = useMetrics();
   const { entries, getTodayEntries } = useEntries();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentView, setCurrentView] = useState<'entry' | 'analytics'>('entry');
+  const [currentView, setCurrentView] = useState<ViewType>('entry');
+
+  // Calculate gamification stats for header display
+  const gamificationStats = useMemo(() => 
+    calculateGamificationStats(entries, metrics),
+    [entries, metrics]
+  );
   
   const todayEntries = getTodayEntries();
   const totalMetrics = metrics.length;
@@ -47,17 +58,17 @@ function App() {
               <nav className="flex space-x-1">
                 <button
                   onClick={() => setCurrentView('entry')}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                     currentView === 'entry'
                       ? 'bg-blue-100 text-blue-700'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
-                  📝 Data Entry
+                  📝 Entry
                 </button>
                 <button
                   onClick={() => setCurrentView('analytics')}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                     currentView === 'analytics'
                       ? 'bg-blue-100 text-blue-700'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -65,17 +76,54 @@ function App() {
                 >
                   📊 Analytics
                 </button>
+                <button
+                  onClick={() => setCurrentView('gamification')}
+                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                    currentView === 'gamification'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  🎮 Progress
+                </button>
+                <button
+                  onClick={() => setCurrentView('data')}
+                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                    currentView === 'data'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  💾 Data
+                </button>
               </nav>
               
-              <div className="flex items-center space-x-3">
-                <div className="text-sm text-gray-600">
-                  Progress: {todayProgress}/{totalMetrics} today
-                </div>
-                <div className="w-24 bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${totalMetrics > 0 ? (todayProgress / totalMetrics) * 100 : 0}%` }}
-                  ></div>
+              <div className="hidden lg:flex items-center space-x-4">
+                {/* Gamification Info */}
+                {gamificationStats.level && (
+                  <div className="flex items-center space-x-2">
+                    <div className="text-xs">
+                      <span className="text-purple-600 font-medium">
+                        Level {gamificationStats.level.level}
+                      </span>
+                      <span className="text-gray-400 mx-1">•</span>
+                      <span className="text-orange-600 font-medium">
+                        🔥 {Math.max(...Array.from(gamificationStats.streaks.values()).map(s => s.current), 0)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex items-center space-x-3">
+                  <div className="text-sm text-gray-600">
+                    Today: {todayProgress}/{totalMetrics}
+                  </div>
+                  <div className="w-20 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${totalMetrics > 0 ? (todayProgress / totalMetrics) * 100 : 0}%` }}
+                    ></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -173,9 +221,15 @@ function App() {
               </div>
             )}
           </>
-        ) : (
+        ) : currentView === 'analytics' ? (
           /* Analytics View */
           <AnalyticsDashboard />
+        ) : currentView === 'gamification' ? (
+          /* Gamification View */
+          <GamificationDashboard />
+        ) : (
+          /* Data Management View */
+          <DataManager />
         )}
       </main>
     </div>
