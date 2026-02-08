@@ -2,62 +2,36 @@
 
 Personal analytics for life optimization (sleep, mood, productivity)
 
-## Project Overview
+## Scope and Direction
+- Project path: `_fixme/life-xp-dashboard`
+- Primary tech profile: Elixir, Node.js/TypeScript or JavaScript
+- Audit date: `2026-02-08`
 
-- **Market**: 45M+ quantified self enthusiasts
-- **MVP Timeline**: 3 weeks
-- **Tech Stack**: React dashboard + manual data entry + simple charts
-- **Revenue Model**: One-time purchase $49, no subscription
-- **Joy Factor**: ⭐⭐⭐⭐ Seeing your life patterns emerge
-
-## Connection to Existing Work
-
-Gamified life XP from Freeflow + skill tracking from DevLift
-
-## OS-Level Gain
-
-Personal data pipeline you control and understand
-
-## Development
-
-This project was bootstrapped with Create React App and TypeScript.
-
-### Available Scripts
-
-- `npm start` - Runs the development server
-- `npm test` - Launches the test runner
-- `npm run build` - Builds the app for production
-- `npm run eject` - Ejects from Create React App (one-way operation)
-
-### Getting Started
-
-```bash
-npm install
-npm start
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-## Current Status
-
-- CRA-based frontend scaffold with concept framing.
-- No evidence of a working data pipeline or backend integration.
-- Operational estimate: **25%** (concept + scaffold).
-
-## Fixme Rationale
-
-- Marked `_fixme` likely because the app is a scaffold without core functionality wired in.
+## What Appears Implemented
+- Detected major components: `src/`
+- No clear API/controller routing signals were detected at this scope
+- Root `package.json` defines development/build automation scripts
 
 ## API Endpoints
+- No explicit HTTP endpoint definitions were detected at the project root scope
 
-- None documented.
+## Testing Status
+- `test` script available in root `package.json`
+- `test:run` script available in root `package.json`
+- `test:ui` script available in root `package.json`
+- `test:coverage` script available in root `package.json`
+- `mix test` likely applies for Elixir components
+- This audit did not assume tests are passing unless explicitly re-run and captured in this session
 
-## Tests
+## Operational Assessment
+- Estimated operational coverage: **37%**
+- Confidence level: **medium**
 
-- Test script exists, but not run in this audit.
+## Bucket Rationale
+- This project sits in `_fixme`, indicating known functional or integration issues still need correction before it should be treated as stable.
 
 ## Future Work
-
-- Implement data ingestion and analytics.
-- Add dashboards and persistence.
-- Introduce test coverage for critical UI flows.
+- Document and stabilize the external interface (CLI, API, or protocol) with explicit examples
+- Run the detected tests in CI and track flakiness, duration, and coverage
+- Validate runtime claims in this README against current behavior and deployment configuration
+- Prioritize defect triage and integration repairs before introducing major new feature scope
