@@ -2,36 +2,39 @@
 
 Personal analytics for life optimization (sleep, mood, productivity)
 
-## Scope and Direction
-- Project path: `_fixme/life-xp-dashboard`
-- Primary tech profile: Elixir, Node.js/TypeScript or JavaScript
-- Audit date: `2026-02-08`
+## Purpose
+- Personal analytics for life optimization (sleep, mood, productivity)
+- Last structured review: `2026-02-08`
 
-## What Appears Implemented
+## Current Implementation
 - Detected major components: `src/`
 - No clear API/controller routing signals were detected at this scope
 - Root `package.json` defines development/build automation scripts
 
-## API Endpoints
+## Interfaces
 - No explicit HTTP endpoint definitions were detected at the project root scope
 
-## Testing Status
+## Testing and Verification
 - `test` script available in root `package.json`
 - `test:run` script available in root `package.json`
 - `test:ui` script available in root `package.json`
 - `test:coverage` script available in root `package.json`
 - `mix test` likely applies for Elixir components
-- This audit did not assume tests are passing unless explicitly re-run and captured in this session
+- Tests are listed here as available commands; rerun before release to confirm current behavior.
 
-## Operational Assessment
+## Current Status
 - Estimated operational coverage: **37%**
 - Confidence level: **medium**
 
-## Bucket Rationale
-- This project sits in `_fixme`, indicating known functional or integration issues still need correction before it should be treated as stable.
+## Stability Notes
+- This repository is tracked in `_fixme`, so treat it as in-progress and prioritize stabilization work before broad release.
 
-## Future Work
+## Next Steps
 - Document and stabilize the external interface (CLI, API, or protocol) with explicit examples
 - Run the detected tests in CI and track flakiness, duration, and coverage
 - Validate runtime claims in this README against current behavior and deployment configuration
 - Prioritize defect triage and integration repairs before introducing major new feature scope
+
+## Source of Truth
+- This README is intended to be the canonical project summary for portfolio alignment.
+- If portfolio copy diverges from this file, update the portfolio entry to match current implementation reality.
