@@ -37,3 +37,27 @@ npm start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+## Current Status
+
+- CRA-based frontend scaffold with concept framing.
+- No evidence of a working data pipeline or backend integration.
+- Operational estimate: **25%** (concept + scaffold).
+
+## Fixme Rationale
+
+- Marked `_fixme` likely because the app is a scaffold without core functionality wired in.
+
+## API Endpoints
+
+- None documented.
+
+## Tests
+
+- Test script exists, but not run in this audit.
+
+## Future Work
+
+- Implement data ingestion and analytics.
+- Add dashboards and persistence.
+- Introduce test coverage for critical UI flows.
