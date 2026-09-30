@@ -1,6 +1,6 @@
 import React from 'react';
 import { MetricEntry, MetricDefinition } from '../../types';
-import { calculateCorrelation, CorrelationResult } from '../../utils/analytics';
+import { findTopCorrelations } from '../../utils/analytics';
 
 interface CorrelationMatrixProps {
   metrics: MetricDefinition[];
@@ -15,25 +15,12 @@ const CorrelationMatrix: React.FC<CorrelationMatrixProps> = ({
   dateRange,
   className = '',
 }) => {
-  // Calculate correlations between all metric pairs
-  const correlations: CorrelationResult[] = [];
-  
-  for (let i = 0; i < metrics.length; i++) {
-    for (let j = i + 1; j < metrics.length; j++) {
-      const correlation = calculateCorrelation(
-        entries,
-        metrics[i].id,
-        metrics[j].id,
-        dateRange
-      );
-      correlations.push(correlation);
-    }
-  }
-
-  // Sort by absolute correlation strength
-  const sortedCorrelations = correlations
-    .filter(c => Math.abs(c.coefficient) > 0.1) // Only show meaningful correlations
-    .sort((a, b) => Math.abs(b.coefficient) - Math.abs(a.coefficient));
+  // Correlations across every metric pair, strongest first — see findTopCorrelations for the
+  // (now unit-tested) aggregation logic this used to duplicate inline.
+  const sortedCorrelations = findTopCorrelations(entries, metrics, dateRange, {
+    minStrength: 'weak',
+    limit: Infinity,
+  });
 
   const getStrengthColor = (coefficient: number) => {
     const abs = Math.abs(coefficient);

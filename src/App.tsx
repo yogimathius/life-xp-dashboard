@@ -12,7 +12,7 @@ type ViewType = 'entry' | 'analytics' | 'gamification' | 'data';
 
 function App() {
   const { metrics, loading: metricsLoading } = useMetrics();
-  const { entries, getTodayEntries } = useEntries();
+  const { entries, getTodayEntries, reloadEntries } = useEntries();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentView, setCurrentView] = useState<ViewType>('entry');
 
@@ -207,8 +207,11 @@ function App() {
               <DataEntryForm
                 metrics={metrics}
                 selectedDate={selectedDate}
-                onSave={(entries) => {
-                  console.log('Saved entries:', entries);
+                onSave={() => {
+                  // DataEntryForm saves through its own useEntries() instance, which
+                  // doesn't share state with this one — reload so the header/stats
+                  // reflect the save immediately instead of only after a page refresh.
+                  reloadEntries();
                 }}
               />
             ) : (

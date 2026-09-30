@@ -221,6 +221,40 @@ export const calculateCorrelation = (
   };
 };
 
+export interface MetricCorrelationSummary extends CorrelationResult {
+  metricAName: string;
+  metricBName: string;
+}
+
+const STRENGTH_RANK: Record<CorrelationResult['strength'], number> = { weak: 0, moderate: 1, strong: 2 };
+
+/**
+ * `calculateCorrelation` computes one pair at a time and was never actually called from any
+ * component — this is the aggregation layer that was missing: run it across every pair of
+ * tracked metrics and surface the ones worth showing a user, strongest first.
+ */
+export const findTopCorrelations = (
+  entries: MetricEntry[],
+  metrics: MetricDefinition[],
+  dateRange: { start: Date; end: Date },
+  options?: { minStrength?: CorrelationResult['strength']; limit?: number }
+): MetricCorrelationSummary[] => {
+  const minRank = STRENGTH_RANK[options?.minStrength ?? 'moderate'];
+  const limit = options?.limit ?? 5;
+
+  const results: MetricCorrelationSummary[] = [];
+  for (let i = 0; i < metrics.length; i++) {
+    for (let j = i + 1; j < metrics.length; j++) {
+      const result = calculateCorrelation(entries, metrics[i].id, metrics[j].id, dateRange);
+      if (STRENGTH_RANK[result.strength] >= minRank && result.direction !== 'none') {
+        results.push({ ...result, metricAName: metrics[i].name, metricBName: metrics[j].name });
+      }
+    }
+  }
+
+  return results.sort((a, b) => Math.abs(b.coefficient) - Math.abs(a.coefficient)).slice(0, limit);
+};
+
 // Generate insights from data
 export const generateInsights = (
   entries: MetricEntry[],

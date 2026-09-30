@@ -449,9 +449,35 @@ export const updateAchievements = (
       }
       
       case 'perfect-week': {
-        // Check for a perfect week (all metrics logged for 7 consecutive days)
-        achievement.progress = 0; // Would need more complex logic
-        achievement.isUnlocked = false; // Simplified for now
+        // A "complete" day is one with an entry for every tracked metric, mirroring
+        // the all-metrics-day check above. Perfect Week needs 7 of those in a row.
+        const entriesByDate = new Map<string, Set<string>>();
+        entries.forEach(entry => {
+          const dateKey = format(entry.date, 'yyyy-MM-dd');
+          if (!entriesByDate.has(dateKey)) {
+            entriesByDate.set(dateKey, new Set());
+          }
+          entriesByDate.get(dateKey)!.add(entry.metricId);
+        });
+
+        const completeDates = Array.from(entriesByDate.entries())
+          .filter(([, metricIds]) => metrics.length > 0 && metricIds.size >= metrics.length)
+          .map(([dateKey]) => dateKey)
+          .sort();
+
+        let longestRun = 0;
+        let currentRun = 0;
+        let previousDate: Date | null = null;
+        completeDates.forEach(dateKey => {
+          const currentDate = new Date(dateKey);
+          currentRun = previousDate && differenceInDays(currentDate, previousDate) === 1 ? currentRun + 1 : 1;
+          longestRun = Math.max(longestRun, currentRun);
+          previousDate = currentDate;
+        });
+
+        const targetDays = achievement.maxProgress ?? 7;
+        achievement.progress = Math.min(longestRun, targetDays);
+        achievement.isUnlocked = longestRun >= targetDays;
         break;
       }
       

@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useMetrics } from '../hooks/useMetrics';
 import { useEntries } from '../hooks/useEntries';
 import { getDateRange, generateInsights } from '../utils/analytics';
+import { preferencesStorage } from '../utils/storage';
 import MetricChart from './charts/MetricChart';
 import CorrelationMatrix from './charts/CorrelationMatrix';
 import TrendAnalysis from './charts/TrendAnalysis';
@@ -16,11 +17,28 @@ type ChartType = 'line' | 'bar' | 'area';
 const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' }) => {
   const { metrics } = useMetrics();
   const { entries } = useEntries();
-  
-  const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRange>('30d');
-  const [selectedChartType, setSelectedChartType] = useState<ChartType>('line');
+
+  // These three mirror DashboardConfig (types/index.ts) and are now persisted through it —
+  // previously always reset to the same hardcoded defaults on every reload.
+  const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRange>(
+    () => preferencesStorage.getDashboardConfig().timeRange
+  );
+  const [selectedChartType, setSelectedChartType] = useState<ChartType>(
+    () => preferencesStorage.getDashboardConfig().chartType
+  );
   const [showMovingAverage, setShowMovingAverage] = useState(false);
-  const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(
+    () => preferencesStorage.getDashboardConfig().visibleMetrics
+  );
+
+  useEffect(() => {
+    preferencesStorage.saveDashboardConfig({
+      ...preferencesStorage.getDashboardConfig(),
+      timeRange: selectedTimeRange,
+      chartType: selectedChartType,
+      visibleMetrics: selectedMetrics,
+    });
+  }, [selectedTimeRange, selectedChartType, selectedMetrics]);
 
   // Calculate date range
   const dateRange = useMemo(() => 
